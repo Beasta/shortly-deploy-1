@@ -54,6 +54,8 @@ module.exports = function(grunt) {
         // Add filespec list here
     },
 
+    clean : ['./public/client/production.js','./public/client/production2.js'],
+
     watch: {
       scripts: {
         files: [
@@ -85,6 +87,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   grunt.registerTask('server-dev', function (target) {
     // Running nodejs in a different process and displaying output on the main console
@@ -108,8 +111,8 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'clean',
     'concat',
-    'jshint',
     'uglify',
     'jshint'
   ]);
@@ -123,7 +126,8 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('deploy', [
-      // add your production server task here
+    'build'
+
   ]);
 
 
