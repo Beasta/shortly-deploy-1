@@ -27,15 +27,16 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      build: {
-        src: './public/client/production.js',
-        dest: './public/client/production.js'
-      }
+      my_target: {
+        files: {
+         './public/client/production2.js': ['./public/client/production.js']
+       }
+     }
     },
 
     jshint: {
       //beforeconcat:['./public/client/*.js'],
-      files:['./public/client/production.js'],
+      files:['./public/client/production2.js'],
       // files: [
       //   './public/client/production.js'
       // ],
