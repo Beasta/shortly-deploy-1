@@ -3,6 +3,12 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+        dist: {
+          src: [
+            './public/client/*.js',
+          ],
+          dest: './public/client/production.js'
+        }
     },
 
     mochaTest: {
@@ -21,12 +27,18 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      build: {
+        src: './public/client/production.js',
+        dest: './public/client/production.js'
+      }
     },
 
     jshint: {
-      files: [
-        // Add filespec list here
-      ],
+      //beforeconcat:['./public/client/*.js'],
+      files:['./public/client/production.js'],
+      // files: [
+      //   './public/client/production.js'
+      // ],
       options: {
         force: 'true',
         jshintrc: '.jshintrc',
@@ -95,6 +107,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'concat',
+    'jshint',
+    'uglify',
+    'jshint'
   ]);
 
   grunt.registerTask('upload', function(n) {
