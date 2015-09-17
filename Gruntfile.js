@@ -3,12 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
-        dist: {
-          src: [
-            './public/client/*.js',
-          ],
-          dest: './public/client/production.js'
-        }
+      options: {
+        separator: ';'
+      },
+      dist: {
+        src: ['./public/client/*.js'],
+        dest: './public/dist/production.js'
+      }
     },
 
     mochaTest: {
@@ -27,19 +28,24 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      my_target: {
+      dist: {
         files: {
-         './public/client/production2.js': ['./public/client/production.js']
+         './public/dist/production.min.js': ['./public/dist/production.js']
        }
      }
     },
 
     jshint: {
       //beforeconcat:['./public/client/*.js'],
-      files:['./public/client/production2.js'],
-      // files: [
-      //   './public/client/production.js'
-      // ],
+      files:[
+        'Gruntfile.js',
+        'app/**/*.js',
+        'public/**/*.js',
+        'lib/**/*.js',
+        './*.js',
+        'spec/**/*.js',
+        //'public/dist/**/*.js'
+        ], 
       options: {
         force: 'true',
         jshintrc: '.jshintrc',
@@ -51,10 +57,15 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
-        // Add filespec list here
+      options: {
+        keepSpecialComments: 0
+      },
+      dist: {
+        files: {
+          'public/dist/style.min.css': 'public/style.css'
+        }
+      }
     },
-
-    clean : ['./public/client/production.js','./public/client/production2.js'],
 
     watch: {
       scripts: {
@@ -75,6 +86,12 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push azure master',
+        options: {
+          stdout: true,
+          stderr: true,
+          failOnError: true
+        }
       }
     },
   });
@@ -107,28 +124,28 @@ module.exports = function(grunt) {
   ////////////////////////////////////////////////////
 
   grunt.registerTask('test', [
-    'mochaTest'
+
+    'jshint',
+      'mochaTest'
   ]);
 
   grunt.registerTask('build', [
-    'clean',
     'concat',
     'uglify',
-    'jshint'
+    'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run([ 'shell:prodServer' ]);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
   grunt.registerTask('deploy', [
-    'build'
-
+    'test',
+    'build',
+    'upload'
   ]);
-
-
 };
